@@ -1,10 +1,18 @@
 <?php
 
-// http://boutique-api/role
+// http://portfolio-api/article
 
 $env = 'dev';
 $_ENV = json_decode(file_get_contents("src/configs/" . $env . ".config.json"), true);
 $_ENV['env'] = $env;
+
+if ($_ENV['env'] == 'dev') {
+    $origin = "http://localhost:3000";
+} else if ($_ENV['env'] == 'prod') {
+    $origin = "http://nomdedomaine.com";
+}
+
+header("Access-Control-Allow-Origin: $origin");
 
 // $_ENV['current'] = 'dev';
 // $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
@@ -60,16 +68,16 @@ if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 't
 // ----------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------
+// Créer un Token à partir d'un tableau associatif
 
-use Helpers\Token;
-// Créer un Token à partir d'un tableau associatif 
-$tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
-$encoded = $tokenFromDataArray->encoded;
+// use Helpers\Token;
+// $tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
+// $encoded = $tokenFromDataArray->encoded;
 
-$tokenFromEncodedString = Token::create($encoded);
-$decoded = $tokenFromEncodedString->decoded;
-$test = $tokenFromEncodedString->isValid();
-$bp = true;
+// $tokenFromEncodedString = Token::create($encoded);
+// $decoded = $tokenFromEncodedString->decoded;
+// $test = $tokenFromEncodedString->isValid();
+// $bp = true;
 
 // Après l'initialisation si elle a eu lieu, le fichier regarde si la valeur de $request->route[0] 
 // Correspond à une constante qui a été définie dans la classe Schemas/Tables;
