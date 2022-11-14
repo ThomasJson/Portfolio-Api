@@ -1,0 +1,1 @@
+<?php namespace Schemas; class Article_category{    const COLUMNS = [        'Id_article' => ['type' => 'int(11)', 'nullable' => '0', 'default' => ''],         'Id_category' => ['type' => 'int(11)', 'nullable' => '0', 'default' => ''],     ];}
