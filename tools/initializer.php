@@ -20,7 +20,7 @@ class Initializer
         $isForce = count($request->route) > 1 && $request->route[1] == 'force';
 
         try {
-            $arrayOfTables = self::writeTableFile();
+            $arrayOfTables = self::writeTableFile($isForce);
             self::writeSchemasFiles($arrayOfTables, $isForce);
 
         } catch (Exception $e) {
@@ -81,7 +81,7 @@ class Initializer
         foreach ($tables as $table) {
 
             $className = $table;
-            $schemaFile = "src/Schemas/$className.php";
+            $schemaFile = "src/schemas/$className.php";
             $dbs = new DatabaseService();
             $schema = $dbs->getSchema($table);          
             if (file_exists($schemaFile) && $isForce) {
