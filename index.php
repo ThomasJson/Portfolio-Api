@@ -24,6 +24,7 @@ use Helpers\HttpRequest;
 use Helpers\HttpResponse;
 use Services\DatabaseService;
 use Controllers\DatabaseController;
+use Controllers\AuthController;
 use Tools\Initializer;
 use Models\Model;
 use Models\ModelList;
@@ -39,10 +40,10 @@ if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'i
 
 // ------------------------ Test du mailerService ----------------------------------
 
-if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
-    $dbs = new DatabaseController($request);
-    $dbs->sendTestMail();
-}
+// if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
+//     $dbs = new DatabaseController($request);
+//     $dbs->sendTestMail();
+// }
 
 // ----------------------------------------------------------------------------------
 // --------------------- Sprint 5 : Test de la classe Model -------------------------
@@ -93,6 +94,9 @@ if (!empty($request->route)) {
 } else {
     HttpResponse::exit(404);
 }
+
+// $authController = new AuthController($request);
+// $test = $authController->login();
 
 $controller = new DatabaseController($request);
 $result = $controller->execute();
