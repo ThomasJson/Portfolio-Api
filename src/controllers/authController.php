@@ -30,13 +30,13 @@ class AuthController
             return ["result" => false];
         }
 
-        $users = $dbs->selectWhere("mail = ? AND is_deleted = ?", [$email, 0]);
-        // $users = (array) $users[0];
+        $user = $dbs->selectWhere("mail = ? AND is_deleted = ?", [$email, 0]);
+        $prefix = $_ENV['config']->hash->prefix;
 
-        if (count($users) == 1 && $users[0]->password == $this->body['password']) {
+        if (count($user) == 1 && password_verify($this->body['password'], $prefix . $user[0]->password)) {
 
             $dbs = new DatabaseService("role");
-            $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$users[0]->Id_role, 0]);
+            $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
             return ["result" => true, "role" => $role[0]->title];
 
         }

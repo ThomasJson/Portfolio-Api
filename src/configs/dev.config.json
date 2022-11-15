@@ -6,6 +6,9 @@
         "user": "root",
         "pass": ""
     },
+    "hash": {
+        "prefix": "$argon2id$v=19$m=1024,t=2,p=2$"
+    },
     "mailer": {
         "main": {
             "host": "smtp.gmail.com",

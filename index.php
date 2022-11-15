@@ -2,21 +2,23 @@
 
 // http://portfolio-api/article
 
-$env = 'dev';
-$_ENV = json_decode(file_get_contents("src/configs/" . $env . ".config.json"), true);
-$_ENV['env'] = $env;
+// $env = 'dev';
+// $_ENV = json_decode(file_get_contents("src/configs/" . $env . ".config.json"), true);
+// $_ENV['env'] = $env;
 
-if ($_ENV['env'] == 'dev') {
+$_ENV['current'] = 'dev';
+$config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
+$_ENV['config'] = json_decode($config);
+
+if ($_ENV['current'] == 'dev') {
     $origin = "http://localhost:3000";
-} else if ($_ENV['env'] == 'prod') {
+} else if ($_ENV['current'] == 'prod') {
     $origin = "http://nomdedomaine.com";
 }
 
 header("Access-Control-Allow-Origin: $origin");
 
-// $_ENV['current'] = 'dev';
-// $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
-// $_ENV['config'] = json_decode($config);
+
 
 require_once 'autoload.php';
 
@@ -31,7 +33,7 @@ use Models\ModelList;
 
 $request = HttpRequest::instance();
 
-if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'init') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'init') {
     if (Initializer::start($request)) {
         HttpResponse::send(["message" => "Api Initialized"]);
     }
@@ -40,7 +42,7 @@ if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'i
 
 // ------------------------ Test du mailerService ----------------------------------
 
-// if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
+// if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
 //     $dbs = new DatabaseController($request);
 //     $dbs->sendTestMail();
 // }
@@ -95,7 +97,7 @@ if (!empty($request->route)) {
     HttpResponse::exit(404);
 }
 
-if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
     $authController = new AuthController($request);
     $test = $authController->login();
 
