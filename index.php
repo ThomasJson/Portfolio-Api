@@ -95,12 +95,18 @@ if (!empty($request->route)) {
     HttpResponse::exit(404);
 }
 
-// $authController = new AuthController($request);
-// $test = $authController->login();
+if ($_ENV['env'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
+    $authController = new AuthController($request);
+    $test = $authController->login();
 
-$controller = new DatabaseController($request);
-$result = $controller->execute();
-
-if ($result) {
-    HttpResponse::send(["data" => $result], 200);
+    if ($test) {
+        HttpResponse::send(["data" => $test], 200);
+    }
 }
+
+// $controller = new DatabaseController($request);
+// $result = $controller->execute();
+
+// if ($result) {
+//     HttpResponse::send(["data" => $result], 200);
+// }

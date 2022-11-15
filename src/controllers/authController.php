@@ -35,9 +35,9 @@ class AuthController
 
         if (count($users) == 1 && $users[0]->password == $this->body['password']) {
 
-            // $dbs = new DatabaseService("???");
-            // $appUser = $dbs->selectOne($accounts[0]->Id_appUser);
-            // return ["result" => true, "role" => $appUser->Id_role];
+            $dbs = new DatabaseService("role");
+            $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$users[0]->Id_role, 0]);
+            return ["result" => true, "role" => $role[0]->title];
 
         }
         return ["result" => false];
