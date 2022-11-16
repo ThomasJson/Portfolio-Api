@@ -2,10 +2,6 @@
 
 // http://portfolio-api/article
 
-// $env = 'dev';
-// $_ENV = json_decode(file_get_contents("src/configs/" . $env . ".config.json"), true);
-// $_ENV['env'] = $env;
-
 $_ENV['current'] = 'dev';
 $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
 $_ENV['config'] = json_decode($config);
@@ -31,6 +27,8 @@ use Models\ModelList;
 
 $request = HttpRequest::instance();
 
+// ------------------------------ Initializer ------------------------------------
+
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'init') {
     if (Initializer::start($request)) {
         HttpResponse::send(["message" => "Api Initialized"]);
@@ -38,37 +36,41 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
     HttpResponse::send(["message" => "Api Not Initialized, try again ..."]);
 }
 
-// ------------------------ Test du mailerService ----------------------------------
+// ------------------------------ mailerService ----------------------------------
 
-// if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
-//     $dbs = new DatabaseController($request);
-//     $dbs->sendTestMail();
-// }
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'test') {
+    $dbs = new DatabaseController($request);
+    $result = $dbs->sendTestMail();
 
-// ----------------------------------------------------------------------------------
-// --------------------- Sprint 5 : Test de la classe Model -------------------------
-// ----------------------------------------------------------------------------------
+    if ($result) {
+        HttpResponse::send(["data" => $result], 200);
+    }
+}
 
-// $articleModel = new Model("article", ["title"=>"Une veste mauve", "content"=>"Une super veste", "price"=>"25,6", "stock"=>"20"]);
-// $articleData = $articleModel->data();
+// ---------------------------------- Login --------------------------------------
 
-// ----------------------------------------------------------------------------------
-// --------------------- Sprint 5 : Test de la classe ModelList ---------------------
-// ----------------------------------------------------------------------------------
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
+    $authController = new AuthController($request);
+    $result = $authController->login();
 
-// $list = [["title"=>"Une veste mauve", "content"=>"Une super veste", "price"=>"25,6", "stock"=>"20"], ["title"=>"Une veste jaune", "content"=>"Une moche veste", "price"=>"10,1", "stock"=>"100"]];
-// $modelList = new ModelList("article", $list);
+    if ($result) {
+        HttpResponse::send(["data" => $result], 200);
+    }
+}
 
-// $schema = $modelList::getSchema("article");
-// $listData = $modelList->data();
-// $listId = $modelList->idList();
+// ---------------------------------- CRUD ---------------------------------------
 
-// $modelById = $modelList->findById($listId[0]);
-// $breakPoint = 0;
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method != 'POST') {
+    $controller = new DatabaseController($request);
+    $result = $controller->execute();
 
-// ----------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------
+    if ($result) {
+        HttpResponse::send(["data" => $result], 200);
+    }
+}
+
+// ---------------------------------- TOKEN --------------------------------------
+
 // Créer un Token à partir d'un tableau associatif
 
 // use Helpers\Token;
@@ -80,35 +82,3 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 // $test = $tokenFromEncodedString->isValid();
 // $bp = true;
 
-// Après l'initialisation si elle a eu lieu, le fichier regarde si la valeur de $request->route[0] 
-// Correspond à une constante qui a été définie dans la classe Schemas/Tables;
-
-if (!empty($request->route)) {
-
-    $const = strtoupper($request->route[0]);
-    $key = "Schemas\Table::$const";
-
-    if (!defined($key)) { // Si la valeur n'existe pas dans constante : erreur 404;
-        HttpResponse::exit(404);
-    }
-} else {
-    HttpResponse::exit(404);
-}
-
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
-    $authController = new AuthController($request);
-    $test = $authController->login();
-
-    if ($test) {
-        HttpResponse::send(["data" => $test], 200);
-    }
-}
-
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method != 'POST') {
-    $controller = new DatabaseController($request);
-    $result = $controller->execute();
-
-    if ($result) {
-        HttpResponse::send(["data" => $result], 200);
-    }
-}
