@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Services\DatabaseService;
 use Helpers\HttpRequest;
+use Helpers\Token;
 
 class AuthController
 {
@@ -23,7 +24,7 @@ class AuthController
     public function login()
     {
         $dbs = new DatabaseService($this->table);
-        
+
         $email = filter_var($this->body['mail'], FILTER_SANITIZE_EMAIL);
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -37,9 +38,22 @@ class AuthController
 
             $dbs = new DatabaseService("role");
             $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
-            return ["result" => true, "role" => $role[0]->weight];
+
+            // Créer un Token à partir d'un tableau associatif
+
+            $tokenFromDataArray = Token::create(['mail' => $user[0]->mail, 'password' => $user[0]->password]);
+            $encoded = $tokenFromDataArray->encoded;
+
+            $tokenFromEncodedString = Token::create($encoded);
+            $decoded = $tokenFromEncodedString->decoded;
+            $test = $tokenFromEncodedString->isValid();
+
+            if($test == true) {
+                return ["result" => true, "role" => $role[0]->weight, "token" => $encoded];
+            }
 
         }
+
         return ["result" => false];
     }
 }

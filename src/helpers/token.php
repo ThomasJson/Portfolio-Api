@@ -65,7 +65,6 @@ class Token {
      */
     private function encode(array $decoded = []) : void
     {
-        // ???
         $decoded['createdAt'] = time();
         if(!isset($decoded['usableAt'])){
             $decoded['usableAt'] = $decoded['createdAt'];
@@ -83,7 +82,8 @@ class Token {
         $this->decoded = $decoded;
         $payload = json_encode($decoded);
         $payload = base64_encode($payload);
-        $signature = password_hash($payload. self::$separator . $_ENV['secret_key'], PASSWORD_BCRYPT, ['cost' => 8]);
+        $secret_key = $_ENV['config']->secret_key->secret;
+        $signature = password_hash($payload. self::$separator . $secret_key, PASSWORD_BCRYPT, ['cost' => 8]);
         $encoded = str_replace(self::$prefix, "", $signature) . self::$separator . $payload;
         $this->encoded = urlencode($encoded);
     }
@@ -94,14 +94,14 @@ class Token {
      */
     private function decode(string $encoded) : void
     {
-        // ???
         $this->encoded = $encoded;
         $encoded = urldecode($this->encoded) ;
         $encodedSplit = explode(self::$separator, $encoded);
         if(count($encodedSplit) == 2){
             $payload = $encodedSplit[1];
             $signature = self::$prefix . $encodedSplit[0];
-            $isValid = password_verify($payload. self::$separator . $_ENV['secret_key'], $signature);
+            $secret_key = $_ENV['config']->secret_key->secret;
+            $isValid = password_verify($payload. self::$separator . $secret_key, $signature);
             if($isValid){
                 $payload = base64_decode($payload);
                 $decoded = json_decode($payload, true);

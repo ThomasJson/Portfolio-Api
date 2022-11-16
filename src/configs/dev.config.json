@@ -9,6 +9,9 @@
     "hash": {
         "prefix": "$argon2id$v=19$m=1024,t=2,p=2$"
     },
+    "secret_key": {
+        "secret": "kjebf75JHFdncbe"
+    },
     "mailer": {
         "main": {
             "host": "smtp.gmail.com",
