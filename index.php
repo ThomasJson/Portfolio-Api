@@ -18,8 +18,6 @@ if ($_ENV['current'] == 'dev') {
 
 header("Access-Control-Allow-Origin: $origin");
 
-
-
 require_once 'autoload.php';
 
 use Helpers\HttpRequest;
@@ -106,9 +104,11 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 
     }
 }
 
-// $controller = new DatabaseController($request);
-// $result = $controller->execute();
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method != 'POST') {
+    $controller = new DatabaseController($request);
+    $result = $controller->execute();
 
-// if ($result) {
-//     HttpResponse::send(["data" => $result], 200);
-// }
+    if ($result) {
+        HttpResponse::send(["data" => $result], 200);
+    }
+}
