@@ -12,19 +12,25 @@ class AuthController
     public function __construct(HttpRequest $request)
     {
         $this->controller = $request->route[0];
+        // http://portfolio-api/auth
+
         $this->function = isset($request->route[1]) ? $request->route[1] : null;
+        // http://portfolio-api/auth/login
 
         $request_body = file_get_contents('php://input');
         $this->body = json_decode($request_body, true) ?: [];
 
         $this->action = $request->method;
+        // Methode declarée dans le fetch de react
     }
 
     public function execute()
     {
 
         $function = $this->function;
+        // $function = /login , /check
         $result = self::$function();
+        // self fais référence à la Class en cours, :: signifie utilise la fonction 
         return $result;
     }
 

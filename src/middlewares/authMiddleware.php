@@ -2,25 +2,28 @@
 
 namespace Middlewares;
 
+use Helpers\HttpRequest;
+
 class AuthMiddleware {
 
-public function __construct($req)
+public function __construct(HttpRequest $request)
 {
     $restrictedRoutes = (array)$_ENV['config']->restricted;
+    $bp = true;
+    // $params = explode('/', $request);
+    // $this->id = array_pop($params);
 
-    $params = explode('/', $req);
-    $this->id = array_pop($params);
-    if(isset($restrictedRoutes[$req])){
-        $this->condition = $restrictedRoutes[$req];
-    }
-    foreach ($restrictedRoutes as $k => $v){
-        $restricted = str_replace(":id", $this->id, $k);
+    // if(isset($restrictedRoutes[$req])){
+    //     $this->condition = $restrictedRoutes[$req];
+    // }
+    // foreach ($restrictedRoutes as $k => $v){
+    //     $restricted = str_replace(":id", $this->id, $k);
         
-        if($restricted == $req){
-            $this->condition = $v;
-            break;
-        }
-    }
+    //     if($restricted == $req){
+    //         $this->condition = $v;
+    //         break;
+    //     }
+    // }
 }
 
 // public function verify(){
