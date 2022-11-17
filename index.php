@@ -36,20 +36,6 @@ if($_SERVER['REQUEST_METHOD'] == "OPTIONS"){
 
 $request = HttpRequest::instance();
 
-// ---------------------------------- TOKEN --------------------------------------
-
-// Créer un Token à partir d'un tableau associatif
-
-// use Helpers\Token;
-// $tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
-// $encoded = $tokenFromDataArray->encoded;
-
-// $tokenFromEncodedString = Token::create($encoded);
-// $decoded = $tokenFromEncodedString->decoded;
-// $test = $tokenFromEncodedString->isValid();
-// $bp = true;
-
-
 // ------------------------------ Initializer ------------------------------------
 
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'init') {
@@ -98,3 +84,16 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method !==
         HttpResponse::send(["data" => $result], 200);
     }
 }
+
+// ---------------------------------- TOKEN --------------------------------------
+
+// Créer un Token à partir d'un tableau associatif
+
+// use Helpers\Token;
+// $tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
+// $encoded = $tokenFromDataArray->encoded;
+
+// $tokenFromEncodedString = Token::create($encoded);
+// $decoded = $tokenFromEncodedString->decoded;
+// $test = $tokenFromEncodedString->isValid();
+// $bp = true;
