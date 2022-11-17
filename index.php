@@ -13,6 +13,9 @@ if ($_ENV['current'] == 'dev') {
 }
 
 header("Access-Control-Allow-Origin: $origin");
+header('Access-Control-Allow-Headers: Authorization');
+header("Access-Control-Allow-Credentials: true");
+header ( "Access-Control-Allow-Methods: GET,POST,PUT,PATCH,OPTIONS" );
 
 require_once 'autoload.php';
 
@@ -63,9 +66,9 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 
 // ---------------------------------- Login --------------------------------------
 
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 'POST') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'auth') {
     $authController = new AuthController($request);
-    $result = $authController->login();
+    $result = $authController->execute();
 
     if ($result) {
         HttpResponse::send(["data" => $result], 200);
@@ -74,7 +77,7 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method == 
 
 // ---------------------------------- CRUD ---------------------------------------
 
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method != 'POST') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method !== 'POST' && $request->route[0] !== 'auth') {
     $controller = new DatabaseController($request);
     $result = $controller->execute();
 

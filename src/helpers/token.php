@@ -39,7 +39,6 @@ class Token {
      */
     public function isValid(bool $withDate = true) : bool
     {
-        //???
         if(!isset($this->decoded)){
             return false;
         }

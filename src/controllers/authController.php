@@ -11,9 +11,8 @@ class AuthController
 
     public function __construct(HttpRequest $request)
     {
-        $this->table = $request->route[0];
-        $this->pk = "Id_" . $this->table; // Clé
-        $this->id = isset($request->route[1]) ? $request->route[1] : null; // Valeur
+        $this->controller = $request->route[0];
+        $this->function = isset($request->route[1]) ? $request->route[1] : null;
 
         $request_body = file_get_contents('php://input');
         $this->body = json_decode($request_body, true) ?: [];
@@ -21,9 +20,17 @@ class AuthController
         $this->action = $request->method;
     }
 
+    public function execute()
+    {
+
+        $function = $this->function;
+        $result = self::$function();
+        return $result;
+    }
+
     public function login()
     {
-        $dbs = new DatabaseService($this->table);
+        $dbs = new DatabaseService('app_user');
 
         $email = filter_var($this->body['mail'], FILTER_SANITIZE_EMAIL);
 
@@ -44,16 +51,34 @@ class AuthController
             $tokenFromDataArray = Token::create(['mail' => $user[0]->mail, 'password' => $user[0]->password]);
             $encoded = $tokenFromDataArray->encoded;
 
-            $tokenFromEncodedString = Token::create($encoded);
+            return ["result" => true, "role" => $role[0]->weight, "token" => $encoded];
+        }
+
+        return ["result" => false];
+    }
+
+    public function check()
+    {
+        $headers = apache_request_headers();
+        $token = $headers["Authorization"];
+        if (!empty($token)) {
+            $tokenFromEncodedString = Token::create($token);
             $decoded = $tokenFromEncodedString->decoded;
             $test = $tokenFromEncodedString->isValid();
 
-            if($test == true) {
-                return ["result" => true, "role" => $role[0]->weight, "token" => $encoded];
+            if ($test == true) {
+                $dbs = new DatabaseService("app_user");
+                $user = $dbs->selectWhere("mail = ? AND is_deleted = ?", [$decoded["mail"], 0]);
+                
+                $dbs = new DatabaseService("role");
+                $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
+
+                return ["result" => true, "role" => $role[0]->weight];
             }
 
+            return ["result" => false];
         }
-
+        
         return ["result" => false];
     }
 }
