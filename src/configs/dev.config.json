@@ -12,6 +12,11 @@
     "secret_key": {
         "secret": "kjebf75JHFdncbe"
     },
+    "restricted": {
+        "GET/app_user": "$userRole == 1;",
+        "GET/app_user/:id": "$userRole == 1 || $userId == $id;",
+        "GET/article": "$userRole > 0;"
+    },
     "mailer": {
         "main": {
             "host": "smtp.gmail.com",

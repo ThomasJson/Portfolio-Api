@@ -27,6 +27,12 @@ use Controllers\AuthController;
 use Tools\Initializer;
 use Models\Model;
 use Models\ModelList;
+use Middlewares\AuthMiddleware;
+
+if($_SERVER['REQUEST_METHOD'] == "OPTIONS"){
+    header('HTTP/1.0 200 OK');
+    die;
+}
 
 $request = HttpRequest::instance();
 
@@ -74,6 +80,13 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
         HttpResponse::send(["data" => $result], 200);
     }
 }
+
+// ---------------------------------- AUTH ---------------------------------------
+
+$authMiddleware = new AuthMiddleware($request);
+$bp = true;
+
+// $authMiddleware->verify();
 
 // ---------------------------------- CRUD ---------------------------------------
 

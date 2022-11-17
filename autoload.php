@@ -15,17 +15,11 @@ function loadFiles($className)
         require_once $classPath;
     }
 
-    // $classPath = "vendor\\" . strtolower($className) . ".php";
-    // if (file_exists($classPath)) {
-    //     require_once $classPath;
-    // }
-
     $toolsPath = strtolower($className) . ".php";
     if (file_exists($toolsPath)) {
         require_once $toolsPath;
     }
 
-    // require "./vendor/autoload.php";
 }
 
 spl_autoload_register("loadFiles");
