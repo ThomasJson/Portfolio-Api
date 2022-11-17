@@ -51,7 +51,7 @@ class AuthController
             $tokenFromDataArray = Token::create(['mail' => $user[0]->mail, 'password' => $user[0]->password]);
             $encoded = $tokenFromDataArray->encoded;
 
-            return ["result" => true, "role" => $role[0]->weight, "token" => $encoded];
+            return ["result" => true, "role" => $role[0]->weight, "id" => $user[0]->Id_app_user, "token" => $encoded];
         }
 
         return ["result" => false];
@@ -60,8 +60,11 @@ class AuthController
     public function check()
     {
         $headers = apache_request_headers();
-        $token = $headers["Authorization"];
-        if (!empty($token)) {
+        if(isset($headers["Authorization"])) {
+            $token = $headers["Authorization"];
+        }
+        
+        if (isset($token) && !empty($token)) {
             $tokenFromEncodedString = Token::create($token);
             $decoded = $tokenFromEncodedString->decoded;
             $test = $tokenFromEncodedString->isValid();
