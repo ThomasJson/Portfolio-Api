@@ -71,6 +71,7 @@ class AuthController
         }
         
         if (isset($token) && !empty($token)) {
+            
             $tokenFromEncodedString = Token::create($token);
             $decoded = $tokenFromEncodedString->decoded;
             $test = $tokenFromEncodedString->isValid();
