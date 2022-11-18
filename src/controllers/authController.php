@@ -32,6 +32,7 @@ class AuthController
         $result = self::$function();
         // self fais référence à la Class en cours, :: signifie utilise la fonction 
         return $result;
+
     }
 
     public function login()
