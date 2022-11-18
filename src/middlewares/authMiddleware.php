@@ -8,22 +8,35 @@ class AuthMiddleware {
 
 public function __construct(HttpRequest $request)
 {
+    
     $restrictedRoutes = (array)$_ENV['config']->restricted;
-    $bp = true;
-    // $params = explode('/', $request);
-    // $this->id = array_pop($params);
+    
+    $params = $request->stringRequest;
 
-    // if(isset($restrictedRoutes[$req])){
-    //     $this->condition = $restrictedRoutes[$req];
-    // }
-    // foreach ($restrictedRoutes as $k => $v){
-    //     $restricted = str_replace(":id", $this->id, $k);
+    $this->id = isset($request->route[1]) ? $request->route[1] : null;
+    
+    $params = str_replace($this->id, ":id", $params);
+    // str_replace (l'item à changer, la valeur qu'on veut injecter, l'output: avec la nouvelle valeur)
+ 
+
+    if(isset($restrictedRoutes[$params])){
+        $this->condition = $restrictedRoutes[$params];
+    }
+    
+    $bp = true;
+
+    foreach ($restrictedRoutes as $k => $v){
+        // Pour chaque routes restricted .. 
+        $restricted = str_replace(":id", $this->id, $k);
         
-    //     if($restricted == $req){
-    //         $this->condition = $v;
-    //         break;
-    //     }
-    // }
+        if($restricted == $params){
+            $this->condition = $v;
+            break;
+        }
+
+        $bp = true;
+    }
+
 }
 
 // public function verify(){

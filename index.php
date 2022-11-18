@@ -69,8 +69,8 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 
 // ---------------------------------- AUTH ---------------------------------------
 
-// $authMiddleware = new AuthMiddleware($request);
-// $bp = true;
+$authMiddleware = new AuthMiddleware($request);
+$bp = true;
 
 // $authMiddleware->verify();
 

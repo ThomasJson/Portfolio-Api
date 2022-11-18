@@ -82,7 +82,7 @@ class AuthController
                 $dbs = new DatabaseService("role");
                 $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
 
-                return ["result" => true, "role" => $role[0]->weight];
+                return ["result" => true, "role" => $role[0]->weight, "id" => $user[0]->Id_app_user];
             }
 
             return ["result" => false];
