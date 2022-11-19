@@ -92,4 +92,8 @@ class AuthController
         
         return ["result" => false];
     }
+
+    public function register(){
+        return ["result" => true, "Pseudo" => $this->body['pseudo'], "e-mail" => $this->body['mail']];
+    }
 }

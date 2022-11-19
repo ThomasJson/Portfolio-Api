@@ -49,11 +49,9 @@ class AuthMiddleware
                 $token = $headers["Authorization"];
             }
 
-            if (isset($_COOKIE['blog'])) { // ???
-                $token = $_COOKIE['blog'];
-            }
-
-            // $secretKey = $_ENV['config']->secret;
+            // if (isset($_COOKIE['blog'])) {
+            //     $token = $_COOKIE['blog'];
+            // }
 
             if (isset($token) && !empty($token)) {
                 $tokenFromEncodedString = Token::create($token);

@@ -76,8 +76,8 @@ class DatabaseController
         $ms = new MailerService();
         $mailParams = [
             "fromAddress" => ["blog@gmail.com","newsletter monblog.com"],
-            "destAddresses" => ["itstompearson.contact@gmail.com"],
-            "replyAddress" => ["blog@gmail@gmail.com", "information monblog.com"],
+            "destAddresses" => ["itstompearson.blog@gmail.com"],
+            "replyAddress" => ["blog@gmail.com", "information monblog.com"],
             "subject" => "Newsletter nomblog.com",
             "body" => "This is the HTML message sent by <b>monblog.com</b>",
             "altBody" => "This is the plain text message for non-HTML mail clients"

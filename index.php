@@ -56,7 +56,7 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
     }
 }
 
-// ---------------------------------- Login --------------------------------------
+// ---------------------------- Login / Register ---------------------------------
 
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] == 'auth') {
     $authController = new AuthController($request);
