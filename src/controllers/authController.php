@@ -5,6 +5,7 @@ namespace Controllers;
 use Services\DatabaseService;
 use Helpers\HttpRequest;
 use Helpers\Token;
+use Services\MailerService;
 
 class AuthController
 {
@@ -107,6 +108,84 @@ class AuthController
             return ['result' => false, 'message' => 'pseudo ' . $this->body['pseudo'] . ' already used'];
         }
 
-        return ["result" => true, "Pseudo" => $this->body['pseudo'], "e-mail" => $this->body['mail']];
+        $tokenFromDataArray = Token::create(['pseudo' => $this->body['pseudo'], 'mail' => $this->body['mail']]);
+        // $tokenFromDataArray->defaultValidity = 60 * 60 * 1;
+
+        $token = $tokenFromDataArray->encoded;
+
+        $href = "http://localhost:3000/account/validate/$token";
+
+        $ms = new MailerService();
+        $mailParams = [
+            "fromAddress" => ["register@monblog.com", "nouveau compte monblog.com"],
+            "destAddresses" => [$this->body['mail']],
+            "replyAddress" => ["noreply@monblog.com", "No Reply"],
+            "subject" => "Créer votre compte nomblog.com",
+            "body" => 'Click to validate the account creation <br>
+                    <a href="' . $href . '">Valider</a> ',
+            "altBody" => "Go to $href to validate the account creation"
+        ];
+
+        $sent = $ms->send($mailParams);
+
+        return ['result' => $sent['result'], 'message' => $sent['result'] ?
+            "Vérifier votre boîte mail et confirmer la création de votre compte sur monblog.com" :
+            "Une erreur est survenue, veuiller recommencer l'inscription"];
+    }
+
+    public function validate()
+    {
+
+        $token = $this->body['token'] ?? "";
+
+        if (isset($token) && !empty($token)) {
+
+            $tokenFromEncodedString = Token::create($token);
+            $decoded = $tokenFromEncodedString->decoded;
+            $test = $tokenFromEncodedString->isValid();
+
+            if ($test == true) {
+                return ["result" => true, "pseudo" => $decoded['pseudo'], "mail" => $decoded['mail']];
+            }
+
+            return ['result' => false];
+        }
+
+        return ['result' => false];
+    }
+
+    public function create()
+    {
+
+        $dbs = new DatabaseService("app_user");
+
+        $password = password_hash($this->body["pass"], PASSWORD_ARGON2ID, [
+            'memory_cost' => 1024,
+            'time_cost' => 2,
+            'threads' => 2
+        ]);
+
+        $prefix = $_ENV['config']->hash->prefix;
+        $password = str_replace($prefix, "", $password);
+
+        $user = $dbs->insertOrUpdate(["mail" => $this->body["data"]["mail"], "password" => $password]);
+
+        if ($user) {
+
+            $dbs = new DatabaseService("account");
+            $account = $dbs->insertOrUpdate(
+                [
+                    "pseudo" => $this->body["data"]["pseudo"],
+                    "Id_app_user" => $user["Id_app_user"]
+                ]
+            );
+
+            if ($account) {
+                return ["result" => true];
+            }
+            
+        }
+
+        return ["result" => false];
     }
 }

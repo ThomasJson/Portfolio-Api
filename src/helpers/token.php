@@ -5,7 +5,7 @@ use Exception;
 class Token {
 
     private static $prefix = "$2y$08$"; // Bcryp (salt = 8)
-    private static $defaultValidity = 60 * 60 * 1; // 1h
+    private static $defaultValidity = 60 * 60 * 1;
     private static $separator = "|";
 
     private function __construct()
