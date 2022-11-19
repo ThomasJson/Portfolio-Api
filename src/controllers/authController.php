@@ -32,7 +32,6 @@ class AuthController
         $result = self::$function();
         // self fais référence à la Class en cours, :: signifie utilise la fonction 
         return $result;
-
     }
 
     public function login()
@@ -67,12 +66,12 @@ class AuthController
     public function check()
     {
         $headers = apache_request_headers();
-        if(isset($headers["Authorization"])) {
+        if (isset($headers["Authorization"])) {
             $token = $headers["Authorization"];
         }
-        
+
         if (isset($token) && !empty($token)) {
-            
+
             $tokenFromEncodedString = Token::create($token);
             $decoded = $tokenFromEncodedString->decoded;
             $test = $tokenFromEncodedString->isValid();
@@ -80,7 +79,7 @@ class AuthController
             if ($test == true) {
                 $dbs = new DatabaseService("app_user");
                 $user = $dbs->selectWhere("mail = ? AND is_deleted = ?", [$decoded["mail"], 0]);
-                
+
                 $dbs = new DatabaseService("role");
                 $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
 
@@ -89,11 +88,25 @@ class AuthController
 
             return ["result" => false];
         }
-        
+
         return ["result" => false];
     }
 
-    public function register(){
+    public function register()
+    {
+        $dbs = new DatabaseService("app_user");
+        $user = $dbs->selectWhere("mail = ? AND is_deleted = ?", [$this->body['mail'], 0]);
+
+        if (count($user) > 0) {
+            return ['result' => false, 'message' => 'email ' . $this->body['mail'] . ' already used'];
+        }
+
+        $dbs = new DatabaseService("account");
+        $account = $dbs->selectWhere("pseudo = ? AND is_deleted = ?", [$this->body['pseudo'], 0]);
+        if (count($account) > 0) {
+            return ['result' => false, 'message' => 'pseudo ' . $this->body['pseudo'] . ' already used'];
+        }
+
         return ["result" => true, "Pseudo" => $this->body['pseudo'], "e-mail" => $this->body['mail']];
     }
 }
