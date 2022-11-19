@@ -145,7 +145,7 @@ class AuthController
             $test = $tokenFromEncodedString->isValid();
 
             if ($test == true) {
-                return ["pseudo" => $decoded['pseudo'], "mail" => $decoded['mail']];
+                return ['result' => true, "pseudo" => $decoded['pseudo'], "mail" => $decoded['mail']];
             }
 
             return ['result' => false];
@@ -156,6 +156,9 @@ class AuthController
 
     public function create()
     {
+
+        $dbs = new DatabaseService("role");
+        $role = $dbs->selectWhere("weight = ? AND is_deleted = ?", [1, 0]);
 
         $dbs = new DatabaseService("app_user");
 
@@ -173,7 +176,8 @@ class AuthController
             [
                 [
                     "mail" => $this->body["data"]["mail"], 
-                    "password" => $password
+                    "password" => $password,
+                    "Id_role" => $role[0]->Id_role
                 ]
             ]          
             ]);
@@ -186,7 +190,7 @@ class AuthController
                 [
                     [
                         "pseudo" => $this->body["data"]["pseudo"],
-                        "Id_app_user" => $user["Id_app_user"]
+                        "Id_app_user" => $user[0]->Id_app_user
                     ]
                 ]
                 ]
