@@ -145,7 +145,7 @@ class AuthController
             $test = $tokenFromEncodedString->isValid();
 
             if ($test == true) {
-                return ["result" => true, "pseudo" => $decoded['pseudo'], "mail" => $decoded['mail']];
+                return ["pseudo" => $decoded['pseudo'], "mail" => $decoded['mail']];
             }
 
             return ['result' => false];
@@ -168,22 +168,33 @@ class AuthController
         $prefix = $_ENV['config']->hash->prefix;
         $password = str_replace($prefix, "", $password);
 
-        $user = $dbs->insertOrUpdate(["mail" => $this->body["data"]["mail"], "password" => $password]);
+        $user = $dbs->insertOrUpdate(
+            ["items" => 
+            [
+                [
+                    "mail" => $this->body["data"]["mail"], 
+                    "password" => $password
+                ]
+            ]          
+            ]);
 
         if ($user) {
 
             $dbs = new DatabaseService("account");
             $account = $dbs->insertOrUpdate(
+                ["items" => 
                 [
-                    "pseudo" => $this->body["data"]["pseudo"],
-                    "Id_app_user" => $user["Id_app_user"]
+                    [
+                        "pseudo" => $this->body["data"]["pseudo"],
+                        "Id_app_user" => $user["Id_app_user"]
+                    ]
+                ]
                 ]
             );
 
             if ($account) {
                 return ["result" => true];
             }
-            
         }
 
         return ["result" => false];
