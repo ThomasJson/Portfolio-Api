@@ -9,12 +9,6 @@ use Exception;
 
 class Initializer
 {
-
-    /**
-     * Exécute la méthode writeTableFile
-     * Renvoie true si l'exécution s'est bien passée, false sinon
-     */
-
     public static function start(HttpRequest $request): bool
     {
         $isForce = count($request->route) > 1 && $request->route[1] == 'force';
@@ -44,7 +38,6 @@ class Initializer
         $tableFile = "src/schemas/table.php";
 
         if (file_exists($tableFile) && $isForce) {
-
             $test = unlink($tableFile);
             if ($test == false) {
                 throw new Exception("Le fichier n'a pas pu être supprimé.");
@@ -52,14 +45,12 @@ class Initializer
         }
 
         if (!file_exists($tableFile)) {
-
             $fileContent = "<?php \r\rnamespace Schemas; \r\rclass Table { \r";
             for ($i = 0; $i < count($tables); ++$i) {
                 $value = $tables[$i];
                 $fileContent .= "    const " . strtoupper($value) . " = " . "'" . $value . "';\r";
             }
             $fileContent .= "}";
-
             $test = file_put_contents($tableFile, $fileContent);
             if ($test == false) {
                 throw new Exception("Le fichier n'a pas pu être écrit.");
