@@ -21,12 +21,9 @@ require_once 'autoload.php';
 
 use Helpers\HttpRequest;
 use Helpers\HttpResponse;
-use Services\DatabaseService;
 use Controllers\DatabaseController;
 use Controllers\AuthController;
 use Tools\Initializer;
-use Models\Model;
-use Models\ModelList;
 use Middlewares\AuthMiddleware;
 
 if($_SERVER['REQUEST_METHOD'] == "OPTIONS"){
@@ -84,16 +81,3 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method !==
         HttpResponse::send(["data" => $result], 200);
     }
 }
-
-// ---------------------------------- TOKEN --------------------------------------
-
-// Créer un Token à partir d'un tableau associatif
-
-// use Helpers\Token;
-// $tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
-// $encoded = $tokenFromDataArray->encoded;
-
-// $tokenFromEncodedString = Token::create($encoded);
-// $decoded = $tokenFromEncodedString->decoded;
-// $test = $tokenFromEncodedString->isValid();
-// $bp = true;
