@@ -116,7 +116,7 @@ class DatabaseController
             foreach ($withRows as $k) {
 
                 if ($k->{"Id_" . $with[0]} == $valueToBind) {
-                    
+
                     $rowToFind = $dbsWith->selectWhere("Id_" . $with[0] . " = ? AND is_deleted = ?", [$valueToBind, 0]);
                     $row->with = $rowToFind;
                 }
