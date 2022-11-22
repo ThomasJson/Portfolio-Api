@@ -85,7 +85,7 @@ class DatabaseService
         return $schema;
     }
 
-    public function insertOrUpdate(array $body): ?array
+    public function insertOrUpdate(array $body)
     {
         $modelList = new ModelList($this->table, $body['items']);
         $inClause = trim(str_repeat(" ?,", count($modelList->items)), ",");
@@ -142,12 +142,32 @@ class DatabaseService
         $resp = $this->query($sql, $valuesToBind);
 
         if ($resp->result) {
+            // if (true)
             $rows = $this->selectWhere("$this->pk IN ($inClause)", $modelList->idList());
             // $rows = Tableau contenant les deux Std Class
-            
             return $rows;
         }
-        
+
+        return null;
+    }
+
+    public function softDelete(array $body): ?array
+    {
+        $modelList = new ModelList($this->table, $body['items']);
+        $ids = $modelList->idList();
+        $questionMarks = str_repeat("?,", count($ids));
+        $questionMarks = "(" . trim($questionMarks, ",") . ")";
+        $sql = "UPDATE $this->table SET is_deleted = ? WHERE $this->pk IN $questionMarks";
+        $valuesToBind = [1];
+        foreach ($ids as $id) {
+            array_push($valuesToBind, $id);
+        }
+        $resp = $this->query($sql, $valuesToBind);
+        if ($resp->result) {
+            $where = "is_deleted = ? AND $this->pk IN $questionMarks";
+            $rows = $this->selectWhere($where, $valuesToBind);
+            return $rows;
+        }
         return null;
     }
 
