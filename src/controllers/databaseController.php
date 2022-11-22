@@ -105,6 +105,22 @@ class DatabaseController
     {
         $dbs = new DatabaseService($this->table);
         $rows = $dbs->selectWhere("is_deleted = ?", [0]);
+        
+        $dbsWith = new DatabaseService($with[0]);
+        $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
+
+        foreach($rows as $row) {
+
+            $valueToBind = $row->{"Id_" .$with[0]};
+
+            foreach($withRows as $k) {
+
+                $rowToFind = $dbsWith->selectWhere("Id_" .$with[0]. " = ? AND is_deleted = ?", [$valueToBind, 0]);
+
+                $bp = true;
+            }
+        }
+
         $bp = true;
     }
 }
