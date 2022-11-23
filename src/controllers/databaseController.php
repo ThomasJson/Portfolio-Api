@@ -43,9 +43,9 @@ class DatabaseController
                 $result = $this->getAllWith($this->body["with"]);
             }
 
-            // if ($id > 0) { // POST /table/:id
-            //     $this->action = $this->getOneWith($id, $this->body["with"]);
-            // }
+            if ($this->id > 0) { // POST /table/:id
+                $result = $this->getOneWith($this->id, $this->body["with"]);
+            }
         }
 
         return $result;
@@ -124,5 +124,9 @@ class DatabaseController
         }
 
         return $rows;
+    }
+
+    function getOneWith($id, $with) {
+        $bp = true;
     }
 }
