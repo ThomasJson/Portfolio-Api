@@ -1,6 +1,7 @@
 <?php
 
 // http://portfolio-api/article
+// "GET/article": "$userRole > 0;"
 
 $_ENV['current'] = 'dev';
 $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
@@ -21,12 +22,9 @@ require_once 'autoload.php';
 
 use Helpers\HttpRequest;
 use Helpers\HttpResponse;
-use Services\DatabaseService;
 use Controllers\DatabaseController;
 use Controllers\AuthController;
 use Tools\Initializer;
-use Models\Model;
-use Models\ModelList;
 use Middlewares\AuthMiddleware;
 
 if($_SERVER['REQUEST_METHOD'] == "OPTIONS"){
@@ -76,7 +74,7 @@ $bp = true;
 
 // ---------------------------------- CRUD ---------------------------------------
 
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method !== 'POST' && $request->route[0] !== 'auth') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth') {
     $controller = new DatabaseController($request);
     $result = $controller->execute();
 
@@ -84,16 +82,3 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->method !==
         HttpResponse::send(["data" => $result], 200);
     }
 }
-
-// ---------------------------------- TOKEN --------------------------------------
-
-// Créer un Token à partir d'un tableau associatif
-
-// use Helpers\Token;
-// $tokenFromDataArray = Token::create(['name' => "Laurent", 'id' => 1234]);
-// $encoded = $tokenFromDataArray->encoded;
-
-// $tokenFromEncodedString = Token::create($encoded);
-// $decoded = $tokenFromEncodedString->decoded;
-// $test = $tokenFromEncodedString->isValid();
-// $bp = true;

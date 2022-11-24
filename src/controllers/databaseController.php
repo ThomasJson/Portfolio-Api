@@ -32,9 +32,22 @@ class DatabaseController
      */
     public function execute(): ?array
     {
+        if ($this->action !== "POST") {
+            $action = strtolower($this->action);
+            $result = self::$action();
+        }
 
-        $action = strtolower($this->action);
-        $result = self::$action();
+        if ($this->action == "POST" && isset($this->id)) {
+
+            if ($this->id == "0") {
+                $result = $this->getAllWith($this->body["with"]);
+            }
+
+            if ($this->id !== "0") {
+                $result = $this->getOneWith($this->id, $this->body["with"]);
+            }
+        }
+
         return $result;
     }
 
@@ -66,16 +79,19 @@ class DatabaseController
         return $rows;
     }
 
-    private function delete() : ?array{
+    private function delete(): ?array
+    {
         $dbs = new DatabaseService($this->table);
         $rows = $dbs->hardDelete($this->body);
         return $rows;
     }
 
-    function sendTestMail(){
+    function sendTestMail()
+    {
         $ms = new MailerService();
+
         $mailParams = [
-            "fromAddress" => ["blog@gmail.com","newsletter monblog.com"],
+            "fromAddress" => ["blog@gmail.com", "newsletter monblog.com"],
             "destAddresses" => ["itstompearson.blog@gmail.com"],
             "replyAddress" => ["blog@gmail.com", "information monblog.com"],
             "subject" => "Newsletter nomblog.com",
@@ -83,5 +99,52 @@ class DatabaseController
             "altBody" => "This is the plain text message for non-HTML mail clients"
         ];
         return $ms->send($mailParams);
+    }
+
+    function getAllWith($with)
+    {
+        $dbs = new DatabaseService($this->table);
+        $rows = $dbs->selectWhere("is_deleted = ?", [0]);
+
+        foreach ($rows as $row) {
+            $row->with = [];
+
+            foreach ($with as $item) {
+                $dbsWith = new DatabaseService($item);
+                $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
+                $valueToBind = $row->{"Id_" . $item};
+
+                foreach ($withRows as $k) {
+                    if ($k->{"Id_" . $item} == $valueToBind) {
+                        $rowToFind = $dbsWith->selectWhere("Id_" . $item . " = ? AND is_deleted = ?", [$valueToBind, 0]);
+                        $row->with = array_merge($row->with, $rowToFind);
+                    }
+                }
+            }
+        }
+
+        return $rows;
+    }
+
+    function getOneWith($id, $with)
+    {
+        $dbs = new DatabaseService($this->table);
+        $row = $dbs->selectWhere("$this->pk = ?", [$id]);
+        $row[0]->with = [];
+
+        foreach ($with as $item) {
+            $dbsWith = new DatabaseService($item);
+            $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
+            $valueToBind = $row[0]->{"Id_" . $item};
+
+            foreach ($withRows as $k) {
+                if ($k->{"Id_" . $item} == $valueToBind) {
+                    $rowToFind = $dbsWith->selectWhere("Id_" . $item . " = ? AND is_deleted = ?", [$valueToBind, 0]);
+                    $row[0]->with = array_merge($row[0]->with, $rowToFind);
+                }
+            }
+        }
+        
+        return $row;
     }
 }

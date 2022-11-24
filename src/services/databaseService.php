@@ -85,10 +85,10 @@ class DatabaseService
         return $schema;
     }
 
-    public function insertOrUpdate(array $body): ?array
+    public function insertOrUpdate(array $body)
     {
         $modelList = new ModelList($this->table, $body['items']);
-        $inClause = trim(str_repeat(" ?,", count($modelList->items)), ","); 
+        $inClause = trim(str_repeat(" ?,", count($modelList->items)), ",");
         // $inClause = "?,?"
         $existingRowsList = $this->selectWhere("$this->pk IN ($inClause)", $modelList->idList());
         // $existingRowsList = Les lignes existantes en bdd qui correspondent aux id's d'idList()

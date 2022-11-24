@@ -18,8 +18,6 @@ class AuthMiddleware
         $this->id = isset($request->route[1]) ? $request->route[1] : null;
 
         $params = str_replace($this->id, ":id", $params);
-        // str_replace (l'item à changer, la valeur qu'on veut injecter, l'output: avec la nouvelle valeur)
-
 
         if (isset($restrictedRoutes[$params])) {
             $this->condition = $restrictedRoutes[$params];
@@ -28,10 +26,9 @@ class AuthMiddleware
         $bp = true;
 
         foreach ($restrictedRoutes as $k => $v) {
-            // Pour chaque routes restricted .. 
             $restricted = str_replace(":id", $this->id, $k);
 
-            if ($restricted == $params) {
+            if ($restricted == $request->stringRequest) {
                 $this->condition = $v;
                 break;
             }
@@ -49,13 +46,8 @@ class AuthMiddleware
                 $token = $headers["Authorization"];
             }
 
-            // if (isset($_COOKIE['blog'])) {
-            //     $token = $_COOKIE['blog'];
-            // }
-
             if (isset($token) && !empty($token)) {
                 $tokenFromEncodedString = Token::create($token);
-                $decoded = $tokenFromEncodedString->decoded;
                 $test = $tokenFromEncodedString->isValid();
 
                 if($test == true) {

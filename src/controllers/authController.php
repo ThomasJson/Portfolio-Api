@@ -13,34 +13,26 @@ class AuthController
     public function __construct(HttpRequest $request)
     {
         $this->controller = $request->route[0];
-        // http://portfolio-api/auth
-
         $this->function = isset($request->route[1]) ? $request->route[1] : null;
-        // http://portfolio-api/auth/login
 
         $request_body = file_get_contents('php://input');
         $this->body = json_decode($request_body, true) ?: [];
 
         $this->action = $request->method;
-        // Methode declarée dans le fetch de react
     }
 
     public function execute()
     {
 
         $function = $this->function;
-        // $function = /login , /check
         $result = self::$function();
-        // self fais référence à la Class en cours, :: signifie utilise la fonction 
         return $result;
     }
 
     public function login()
     {
         $dbs = new DatabaseService('app_user');
-
         $email = filter_var($this->body['mail'], FILTER_SANITIZE_EMAIL);
-
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return ["result" => false];
         }
@@ -52,8 +44,6 @@ class AuthController
 
             $dbs = new DatabaseService("role");
             $role = $dbs->selectWhere("Id_role = ? AND is_deleted = ?", [$user[0]->Id_role, 0]);
-
-            // Créer un Token à partir d'un tableau associatif
 
             $tokenFromDataArray = Token::create(['mail' => $user[0]->mail, 'password' => $user[0]->password]);
             $encoded = $tokenFromDataArray->encoded;
@@ -109,8 +99,6 @@ class AuthController
         }
 
         $tokenFromDataArray = Token::create(['pseudo' => $this->body['pseudo'], 'mail' => $this->body['mail']]);
-        // $tokenFromDataArray->defaultValidity = 60 * 60 * 1;
-
         $token = $tokenFromDataArray->encoded;
 
         $href = "http://localhost:3000/account/validate/$token";
@@ -159,48 +147,35 @@ class AuthController
 
         $dbs = new DatabaseService("role");
         $role = $dbs->selectWhere("weight = ? AND is_deleted = ?", [1, 0]);
-
         $dbs = new DatabaseService("app_user");
-
         $password = password_hash($this->body["pass"], PASSWORD_ARGON2ID, [
             'memory_cost' => 1024,
             'time_cost' => 2,
             'threads' => 2
         ]);
-
         $prefix = $_ENV['config']->hash->prefix;
         $password = str_replace($prefix, "", $password);
-
-        $user = $dbs->insertOrUpdate(
-            ["items" => 
-            [
+        $user = $dbs->insertOrUpdate(["items" => [
                 [
-                    "mail" => $this->body["data"]["mail"], 
+                    "mail" => $this->body["data"]["mail"],
                     "password" => $password,
                     "Id_role" => $role[0]->Id_role
                 ]
-            ]          
-            ]);
-
+            ]
+        ]);
         if ($user) {
-
             $dbs = new DatabaseService("account");
-            $account = $dbs->insertOrUpdate(
-                ["items" => 
-                [
+            $account = $dbs->insertOrUpdate(["items" => [
                     [
                         "pseudo" => $this->body["data"]["pseudo"],
                         "Id_app_user" => $user[0]->Id_app_user
                     ]
                 ]
-                ]
-            );
-
+            ]);
             if ($account) {
                 return ["result" => true];
             }
         }
-
         return ["result" => false];
     }
 }
