@@ -39,11 +39,11 @@ class DatabaseController
 
         if ($this->action == "POST" && isset($this->id)) {
 
-            if ($this->id == 0) { // POST /table/0
+            if ($this->id == "0") {
                 $result = $this->getAllWith($this->body["with"]);
             }
 
-            if ($this->id > 0) { // POST /table/:id
+            if ($this->id !== "0") {
                 $result = $this->getOneWith($this->id, $this->body["with"]);
             }
         }
@@ -106,19 +106,19 @@ class DatabaseController
         $dbs = new DatabaseService($this->table);
         $rows = $dbs->selectWhere("is_deleted = ?", [0]);
 
-        $dbsWith = new DatabaseService($with[0]);
-        $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
-
         foreach ($rows as $row) {
+            $row->with = [];
 
-            $valueToBind = $row->{"Id_" . $with[0]};
+            foreach ($with as $item) {
+                $dbsWith = new DatabaseService($item);
+                $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
+                $valueToBind = $row->{"Id_" . $item};
 
-            foreach ($withRows as $k) {
-
-                if ($k->{"Id_" . $with[0]} == $valueToBind) {
-
-                    $rowToFind = $dbsWith->selectWhere("Id_" . $with[0] . " = ? AND is_deleted = ?", [$valueToBind, 0]);
-                    $row->with = $rowToFind;
+                foreach ($withRows as $k) {
+                    if ($k->{"Id_" . $item} == $valueToBind) {
+                        $rowToFind = $dbsWith->selectWhere("Id_" . $item . " = ? AND is_deleted = ?", [$valueToBind, 0]);
+                        $row->with = array_merge($row->with, $rowToFind);
+                    }
                 }
             }
         }
@@ -126,7 +126,25 @@ class DatabaseController
         return $rows;
     }
 
-    function getOneWith($id, $with) {
-        $bp = true;
+    function getOneWith($id, $with)
+    {
+        $dbs = new DatabaseService($this->table);
+        $row = $dbs->selectWhere("$this->pk = ?", [$id]);
+        $row[0]->with = [];
+
+        foreach ($with as $item) {
+            $dbsWith = new DatabaseService($item);
+            $withRows = $dbsWith->selectWhere("is_deleted = ?", [0]);
+            $valueToBind = $row[0]->{"Id_" . $item};
+
+            foreach ($withRows as $k) {
+                if ($k->{"Id_" . $item} == $valueToBind) {
+                    $rowToFind = $dbsWith->selectWhere("Id_" . $item . " = ? AND is_deleted = ?", [$valueToBind, 0]);
+                    $row[0]->with = array_merge($row[0]->with, $rowToFind);
+                }
+            }
+        }
+        
+        return $row;
     }
 }
