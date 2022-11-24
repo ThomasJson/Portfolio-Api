@@ -1,1 +1,0 @@
-<?php namespace Schemas; class Article_category{    const COLUMNS = [        'Id_article' => ['type' => 'varchar(255)', 'nullable' => '0', 'default' => ''],         'Id_category' => ['type' => 'varchar(255)', 'nullable' => '0', 'default' => ''],     ];}
