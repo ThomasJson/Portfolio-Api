@@ -147,7 +147,8 @@ class AuthController
 
         $dbs = new DatabaseService("role");
         $role = $dbs->selectWhere("weight = ? AND is_deleted = ?", [1, 0]);
-        $dbs = new DatabaseService("app_user");
+
+
         $password = password_hash($this->body["pass"], PASSWORD_ARGON2ID, [
             'memory_cost' => 1024,
             'time_cost' => 2,
@@ -155,24 +156,31 @@ class AuthController
         ]);
         $prefix = $_ENV['config']->hash->prefix;
         $password = str_replace($prefix, "", $password);
-        $user = $dbs->insertOrUpdate(["items" => [
+
+
+        $dbs = new DatabaseService("account");
+        $account = $dbs->insertOrUpdate([
+            "items" => [
                 [
-                    "mail" => $this->body["data"]["mail"],
-                    "password" => $password,
-                    "Id_role" => $role[0]->Id_role
+                    "pseudo" => $this->body["data"]["pseudo"]
                 ]
             ]
         ]);
-        if ($user) {
-            $dbs = new DatabaseService("account");
-            $account = $dbs->insertOrUpdate(["items" => [
+
+
+        if ($account) {
+            $dbs = new DatabaseService("app_user");
+            $user = $dbs->insertOrUpdate([
+                "items" => [
                     [
-                        "pseudo" => $this->body["data"]["pseudo"],
-                        "Id_app_user" => $user[0]->Id_app_user
+                        "mail" => $this->body["data"]["mail"],
+                        "password" => $password,
+                        "Id_role" => $role[0]->Id_role,
+                        "Id_account" => $account[0]->Id_account
                     ]
                 ]
             ]);
-            if ($account) {
+            if ($user) {
                 return ["result" => true];
             }
         }

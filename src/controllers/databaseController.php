@@ -39,11 +39,11 @@ class DatabaseController
 
         if ($this->action == "POST" && isset($this->id)) {
 
-            if ($this->id == "0") {
+            if ($this->id == "*") {
                 $result = $this->getAllWith($this->body["with"]);
             }
 
-            if ($this->id !== "0") {
+            if ($this->id !== "*") {
                 $result = $this->getOneWith($this->id, $this->body["with"]);
             }
         }
@@ -144,7 +144,7 @@ class DatabaseController
                 }
             }
         }
-        
+
         return $row;
     }
 }
