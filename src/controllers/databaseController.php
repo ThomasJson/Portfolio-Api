@@ -91,12 +91,16 @@ class DatabaseController
         $ms = new MailerService();
 
         $mailParams = [
-            "fromAddress" => ["blog@gmail.com", "newsletter monblog.com"],
-            "destAddresses" => ["itstompearson.blog@gmail.com"],
+            "fromAddress" => ["itstompearson.blog@gmail.com", "newsletter monblog.com"],
+            "destAddresses" => ["pytompro@gmail.com"],
             "replyAddress" => ["blog@gmail.com", "information monblog.com"],
-            "subject" => "Newsletter nomblog.com",
-            "body" => "This is the HTML message sent by <b>monblog.com</b>",
-            "altBody" => "This is the plain text message for non-HTML mail clients"
+            "subject" => $this->body['subject'],
+            "body" => 
+                "<p>Envoyé par : " . $this->body['name'] . "</p>
+                <p>Sujet : " . $this->body['subject'] . "</p>
+                <p>Message : " . $this->body['message'] . "</p>
+                <p>Reply to : " . $this->body['email'] . "</p>",
+            "altBody" => $this->body['message']
         ];
         return $ms->send($mailParams);
     }
