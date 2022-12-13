@@ -14,8 +14,7 @@
     },
     "restricted": {
         "GET/app_user": "$userRole == 1;",
-        "GET/app_user/:id": "$userRole == 1 || $userId == $id;",
-        "POST/article/:id": "$userRole > 0;"
+        "GET/app_user/:id": "$userRole == 1 || $userId == $id;"
     },
     "mailer": {
         "main": {
