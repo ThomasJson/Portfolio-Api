@@ -1,7 +1,7 @@
 <?php
 
 // http://portfolio-api/article
-// "GET/article": "$userRole > 0;"
+// "POST/article/:id": "$userRole > 0;"
 
 $_ENV['current'] = 'dev';
 $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
@@ -77,6 +77,7 @@ $bp = true;
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth' && $request->route[1] !== "0") {
     $controller = new DatabaseController($request);
     $result = $controller->execute();
+    
 
     if ($result) {
         HttpResponse::send(["data" => $result], 200);
