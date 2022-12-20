@@ -15,7 +15,12 @@ class AuthMiddleware
 
         $params = $request->stringRequest;
 
-        $this->id = isset($request->route[1]) ? $request->route[1] : null;
+        if (isset($request->route[1]) && $request->route[1] === "*") {
+            $this->id = null;
+        } else {
+            $this->id = isset($request->route[1]) ? $request->route[1] : null;
+        }
+
 
         $params = str_replace($this->id, ":id", $params);
 
@@ -50,7 +55,7 @@ class AuthMiddleware
                 $tokenFromEncodedString = Token::create($token);
                 $test = $tokenFromEncodedString->isValid();
 
-                if($test == true) {
+                if ($test == true) {
                     return true;
                 }
             }
