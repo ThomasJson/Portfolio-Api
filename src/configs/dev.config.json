@@ -13,9 +13,6 @@
         "secret": "kjebf75JHFdncbe"
     },
     "restricted": {
-        "POST/app_user": "$userRole == 1;",
-        "POST/app_user/:id": "$userRole == 1 || $userId == $id;",
-        "POST/article/:id": "$userRole > 0;",
         "POST/article/*": "$userRole > 0;"
     },
     "mailer": {

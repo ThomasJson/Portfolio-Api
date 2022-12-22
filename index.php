@@ -1,7 +1,11 @@
 <?php
 
 // http://portfolio-api/article
-// "POST/article/:id": "$userRole > 0;"
+
+// "POST/app_user": "$userRole == 1;",
+// "POST/app_user/:id": "$userRole == 1 || $userId == $id;",
+// "POST/article/:id": "$userRole > 0;",
+// "POST/article/*": "$userRole > 0;"
 
 $_ENV['current'] = 'dev';
 $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
