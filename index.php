@@ -74,8 +74,6 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 $authMiddleware = new AuthMiddleware($request);
 $authMiddleware->verify();
 
-$bp = true;
-
 // ---------------------------------- CRUD ---------------------------------------
 
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth' && $request->route[1] !== "0") {
