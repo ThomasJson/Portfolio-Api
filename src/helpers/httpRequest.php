@@ -10,13 +10,18 @@ class HttpRequest
 
     private function __construct()
     {
-        $this->stringRequest = $_SERVER['REQUEST_METHOD'] . "/" . filter_var(trim($_SERVER["REQUEST_URI"], '/'), FILTER_SANITIZE_URL);
-        $requestArray = explode('/', $this->stringRequest);
+        $this->stringRequest = $_SERVER['REQUEST_METHOD'] . "/" . 
+        filter_var(trim($_SERVER["REQUEST_URI"], '/'), FILTER_SANITIZE_URL);
 
+        $requestArray = explode('/', $this->stringRequest);
         $this->method = array_shift($requestArray);
-        if ($_ENV['current'] == 'dev' && $_SERVER['HTTP_HOST'] == 'localhost') {
-            array_shift($requestArray);
-        }
+
+        // TODO FAIRE DES TESTS SANS CETTE LIGNE / HTTP_HOST TOUJOURS EGAL A PORTFOLIO-API
+
+        // if ($_ENV['current'] == 'dev' && $_SERVER['HTTP_HOST'] == 'localhost') {
+        //     array_shift($requestArray);
+        // }
+
         $this->route = $requestArray;
     }
 

@@ -15,7 +15,7 @@ class AuthMiddleware
 
         $params = $request->stringRequest;
 
-        if (isset($request->route[1]) && $request->route[1] === "*" || $request->route[1] === "0") {
+        if (isset($request->route[1]) && $request->route[1] === "*" || isset($request->route[1]) && $request->route[1] === "0") {
             $this->id = null;
         } else {
             $this->id = isset($request->route[1]) ? $request->route[1] : null;
