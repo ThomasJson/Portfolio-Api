@@ -144,11 +144,8 @@ class AuthController
 
     public function create()
     {
-
         $dbs = new DatabaseService("role");
         $role = $dbs->selectWhere("weight = ? AND is_deleted = ?", [1, 0]);
-
-
         $password = password_hash($this->body["pass"], PASSWORD_ARGON2ID, [
             'memory_cost' => 1024,
             'time_cost' => 2,
@@ -156,7 +153,6 @@ class AuthController
         ]);
         $prefix = $_ENV['config']->hash->prefix;
         $password = str_replace($prefix, "", $password);
-
 
         $dbs = new DatabaseService("account");
         $account = $dbs->insertOrUpdate([
@@ -166,8 +162,6 @@ class AuthController
                 ]
             ]
         ]);
-
-
         if ($account) {
             $dbs = new DatabaseService("app_user");
             $user = $dbs->insertOrUpdate([
