@@ -71,15 +71,15 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 
 // ---------------------------------- AUTH ---------------------------------------
 
-$authMiddleware = new AuthMiddleware($request);
-$authMiddleware->verify();
+// $authMiddleware = new AuthMiddleware($request);
+// $authMiddleware->verify();
 
 // ---------------------------------- CRUD ---------------------------------------
+// && $request->route[1] !== "0"
 
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth' && $request->route[1] !== "0") {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth') {
     $controller = new DatabaseController($request);
     $result = $controller->execute();
-    
 
     if ($result) {
         HttpResponse::send(["data" => $result], 200);
