@@ -13,7 +13,7 @@
         "secret": "kjebf75JHFdncbe"
     },
     "restricted": {
-        
+        "POST/article/*": "$userRole > 0;"
     },
     "mailer": {
         "main": {

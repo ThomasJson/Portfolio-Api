@@ -12,7 +12,6 @@ class AuthMiddleware
     {
 
         $restrictedRoutes = (array)$_ENV['config']->restricted;
-
         $params = $request->stringRequest;
 
         if (isset($request->route[1]) && $request->route[1] === "*" || isset($request->route[1]) && $request->route[1] === "0") {
@@ -21,14 +20,10 @@ class AuthMiddleware
             $this->id = isset($request->route[1]) ? $request->route[1] : null;
         }
 
-
         $params = str_replace($this->id, ":id", $params);
-
         if (isset($restrictedRoutes[$params])) {
             $this->condition = $restrictedRoutes[$params];
         }
-
-        $bp = true;
 
         foreach ($restrictedRoutes as $k => $v) {
             $restricted = str_replace(":id", $this->id, $k);
@@ -37,8 +32,6 @@ class AuthMiddleware
                 $this->condition = $v;
                 break;
             }
-
-            $bp = true;
         }
     }
 
