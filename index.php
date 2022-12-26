@@ -75,9 +75,8 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 // $authMiddleware->verify();
 
 // ---------------------------------- CRUD ---------------------------------------
-// && $request->route[1] !== "0"
 
-if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth') {
+if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth' && $request->route[1] !== "0") {
     $controller = new DatabaseController($request);
     $result = $controller->execute();
 

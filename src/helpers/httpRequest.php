@@ -16,12 +16,6 @@ class HttpRequest
         $requestArray = explode('/', $this->stringRequest);
         $this->method = array_shift($requestArray);
 
-        // TODO FAIRE DES TESTS SANS CETTE LIGNE / HTTP_HOST TOUJOURS EGAL A PORTFOLIO-API
-
-        // if ($_ENV['current'] == 'dev' && $_SERVER['HTTP_HOST'] == 'localhost') {
-        //     array_shift($requestArray);
-        // }
-
         $this->route = $requestArray;
     }
 
