@@ -10,11 +10,11 @@ class AuthMiddleware
 
     public function __construct(HttpRequest $request)
     {
-
         $restrictedRoutes = (array)$_ENV['config']->restricted;
         $params = $request->stringRequest;
 
-        if (isset($request->route[1]) && $request->route[1] === "*" || isset($request->route[1]) && $request->route[1] === "0") {
+        if (isset($request->route[1]) && $request->route[1] === "*" || 
+            isset($request->route[1]) && $request->route[1] === "0") {
             $this->id = null;
         } else {
             $this->id = isset($request->route[1]) ? $request->route[1] : null;
@@ -26,8 +26,8 @@ class AuthMiddleware
         }
 
         foreach ($restrictedRoutes as $k => $v) {
+            
             $restricted = str_replace(":id", $this->id, $k);
-
             if ($restricted == $request->stringRequest) {
                 $this->condition = $v;
                 break;
