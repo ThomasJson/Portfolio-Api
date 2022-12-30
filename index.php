@@ -71,8 +71,8 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 
 // ---------------------------------- AUTH ---------------------------------------
 
-// $authMiddleware = new AuthMiddleware($request);
-// $authMiddleware->verify();
+$authMiddleware = new AuthMiddleware($request);
+$authMiddleware->verify();
 
 // ---------------------------------- CRUD ---------------------------------------
 
