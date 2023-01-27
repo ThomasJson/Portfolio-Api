@@ -17,6 +17,7 @@ if ($_ENV['current'] == 'dev') {
     $origin = "http://nomdedomaine.com";
 }
 
+
 header("Access-Control-Allow-Origin: $origin");
 header('Access-Control-Allow-Headers: Authorization');
 header("Access-Control-Allow-Credentials: true");
