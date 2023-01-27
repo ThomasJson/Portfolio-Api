@@ -11,4 +11,5 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-src/configs/*
+src/configs/dev.config.json
+src/configs/prod.config.json
