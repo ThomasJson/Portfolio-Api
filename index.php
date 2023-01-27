@@ -1,7 +1,11 @@
 <?php
 
 // http://portfolio-api/article
-// "GET/article": "$userRole > 0;"
+
+// "POST/app_user": "$userRole == 1;",
+// "POST/app_user/:id": "$userRole == 1 || $userId == $id;",
+// "POST/article/:id": "$userRole > 0;",
+// "POST/article/*": "$userRole > 0;"
 
 $_ENV['current'] = 'dev';
 $config = file_get_contents("src/configs/" . $_ENV["current"] . ".config.json");
@@ -70,10 +74,8 @@ if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] =
 $authMiddleware = new AuthMiddleware($request);
 $authMiddleware->verify();
 
-$bp = true;
-
 // ---------------------------------- CRUD ---------------------------------------
-
+// 
 if ($_ENV['current'] == 'dev' && !empty($request->route) && $request->route[0] !== 'auth' && $request->route[1] !== "0") {
     $controller = new DatabaseController($request);
     $result = $controller->execute();

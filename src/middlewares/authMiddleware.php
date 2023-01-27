@@ -10,30 +10,28 @@ class AuthMiddleware
 
     public function __construct(HttpRequest $request)
     {
-
         $restrictedRoutes = (array)$_ENV['config']->restricted;
-
         $params = $request->stringRequest;
 
-        $this->id = isset($request->route[1]) ? $request->route[1] : null;
+        if (isset($request->route[1]) && $request->route[1] === "*" || 
+            isset($request->route[1]) && $request->route[1] === "0") {
+            $this->id = null;
+        } else {
+            $this->id = isset($request->route[1]) ? $request->route[1] : null;
+        }
 
         $params = str_replace($this->id, ":id", $params);
-
         if (isset($restrictedRoutes[$params])) {
             $this->condition = $restrictedRoutes[$params];
         }
 
-        $bp = true;
-
         foreach ($restrictedRoutes as $k => $v) {
+            
             $restricted = str_replace(":id", $this->id, $k);
-
             if ($restricted == $request->stringRequest) {
                 $this->condition = $v;
                 break;
             }
-
-            $bp = true;
         }
     }
 
@@ -50,7 +48,7 @@ class AuthMiddleware
                 $tokenFromEncodedString = Token::create($token);
                 $test = $tokenFromEncodedString->isValid();
 
-                if($test == true) {
+                if ($test == true) {
                     return true;
                 }
             }

@@ -18,8 +18,8 @@ class DatabaseController
     public function __construct(HttpRequest $request)
     {
         $this->table = $request->route[0];
-        $this->pk = "Id_" . $this->table; // Clé
-        $this->id = isset($request->route[1]) ? $request->route[1] : null; // Valeur
+        $this->pk = "Id_" . $this->table;
+        $this->id = isset($request->route[1]) ? $request->route[1] : null;
 
         $request_body = file_get_contents('php://input');
         $this->body = json_decode($request_body, true) ?: [];
@@ -47,7 +47,6 @@ class DatabaseController
                 $result = $this->getOneWith($this->id, $this->body["with"]);
             }
         }
-
         return $result;
     }
 
@@ -95,8 +94,8 @@ class DatabaseController
             "destAddresses" => ["pytompro@gmail.com"],
             "replyAddress" => ["blog@gmail.com", "information monblog.com"],
             "subject" => $this->body['subject'],
-            "body" => 
-                "<p>Envoyé par : " . $this->body['name'] . "</p>
+            "body" =>
+            "<p>Envoyé par : " . $this->body['name'] . "</p>
                 <p>Sujet : " . $this->body['subject'] . "</p>
                 <p>Message : " . $this->body['message'] . "</p>
                 <p>Reply to : " . $this->body['email'] . "</p>",
